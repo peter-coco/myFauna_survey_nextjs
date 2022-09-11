@@ -1,4 +1,6 @@
 import Button from '@components/button/Button';
+import useStore from '@store/store';
+import { setResultOnSurvey } from '@utils/function/setResultOnSurvey';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
@@ -9,15 +11,23 @@ const Survey: NextPage = () => {
   const router = useRouter();
   const [loadingToggle, setLoadingToggle] = useState(false);
 
+  const { surveyNo, surveyScore, addSurveyNo, calculateScore } = useStore();
+
   const onClick = (select: 'top' | 'bottom') => {
     // router.query;
     if (select === 'top') {
+      calculateScore(1);
     }
     if (select === 'bottom') {
+      calculateScore(-1);
     }
 
-    if (Number(router.query.index) === 17) {
-      router.push('/result');
+    if (surveyNo === 17) {
+      const resultType = setResultOnSurvey(surveyScore);
+      router.push(`/result/${resultType}`);
+    } else {
+      addSurveyNo();
+      router.push(`/survey/${surveyNo + 1}`);
     }
   };
 
@@ -34,6 +44,10 @@ const Survey: NextPage = () => {
     }
   }, [router]);
 
+  useEffect(() => {
+    console.log(surveyScore);
+  }, [surveyScore]);
+
   if (loadingToggle) {
     return (
       <div>
@@ -46,14 +60,23 @@ const Survey: NextPage = () => {
     );
   }
   return (
-    <div>
+    <div
+      className={`px-4 py-20 max-w-sm mx-auto flex flex-col items-center justify-between h-screen bg-[url('/images/survey_bg${router.query.index}.jpeg')]`}
+    >
       <Head>
         <title>Survey</title>
       </Head>
-      <img src=""></img>
-      <div>나는</div>
-      <Button text="활발한 사람이다." type="homeNIntro" onClick={() => onClick('top')} />
-      <Button text="조용한 사람이다." type="homeNIntro" onClick={() => onClick('bottom')} />
+      <Image
+        width={200}
+        height={200}
+        src={`/images/survey_logo${surveyNo}.jpeg`}
+        alt="survey_image"
+      />
+      <div className="font-bold text-lg text-center text-gray-900">나는</div>
+      <div className="w-full flex flex-col gap-4 items-center ">
+        <Button text="활발한 사람이다." type="homeNIntro" onClick={() => onClick('top')} />
+        <Button text="조용한 사람이다." type="homeNIntro" onClick={() => onClick('bottom')} />
+      </div>
     </div>
   );
 };

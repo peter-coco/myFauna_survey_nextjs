@@ -1,5 +1,11 @@
 import { resultType } from '@utils/type/resultType';
 
+/**
+ * @description 입력받은 영어 type를 한글로 번역하여 return 합니다.
+ * @params {resultType} type
+ * @return string
+ */
+
 const translateToKorResultType = (type: resultType): string => {
   if (type === 'dog') {
     return '멍무이';
