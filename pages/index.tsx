@@ -12,13 +12,13 @@ const Home: NextPage = () => {
     router.push('/intro');
   };
   return (
-    <div className="px-4 py-10 max-w-md min-w-fit mx-auto flex flex-col items-center justify-between h-screen">
+    <div className="px-4 py-10 max-w-sm mx-auto flex flex-col items-center justify-between h-screen">
       <Head>
         <title>나는 어떤 타입의 동물일까?</title>
       </Head>
       <h1 className="font-bold text-xl text-gray-900">나는 어떤 타입의 동물일까?</h1>
       <Image width={246} height={280} src="/images/main.jpeg" alt="main-image" />
-      <Button text="테스트 시작!" type="homeNintro" onClick={onClick} />
+      <Button text="테스트 시작!" type="homeNIntro" onClick={onClick} />
       <h3 className="font-bold text-lg text-center text-gray-900">
         참여자 수 <div> 1000000</div>
       </h3>
