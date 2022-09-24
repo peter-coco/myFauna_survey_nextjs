@@ -17,8 +17,8 @@ export interface ContentsForm {
 const Survey: NextPage = () => {
   const router = useRouter();
   const [loadingToggle, setLoadingToggle] = useState(false);
-
-  const { surveyNo, surveyScore, addSurveyNo, calculateScore } = useStore();
+  const [timer, setTimer] = useState(2);
+  const { surveyNo, surveyScore, addSurveyNo, resetSurveyNo, calculateScore } = useStore();
   const [contents, setContents] = useState<ContentsForm>(
     setSurveyContents(Number(router.query.index))
   );
@@ -33,8 +33,7 @@ const Survey: NextPage = () => {
     }
 
     if (surveyNo === 17) {
-      const resultType = setResultOnSurvey(surveyScore);
-      router.push(`/result/${resultType}`);
+      setLoadingToggle(true);
     } else {
       addSurveyNo();
       router.push(`/survey/${surveyNo + 1}`);
@@ -55,18 +54,43 @@ const Survey: NextPage = () => {
     }
   }, [router]);
 
-  // useEffect(() => {
-
-  // }, [surveyScore]);
+  useEffect(() => {
+    if (loadingToggle) {
+      const countdown = setInterval(() => {
+        if (timer > 0) {
+          setTimer((pre) => pre - 1);
+        } else {
+          // api 통신 필요 !
+          // handleAddResultToDatabase();
+          const resultType = setResultOnSurvey(surveyScore);
+          router.push(`/result/${resultType}`);
+          resetSurveyNo();
+          return;
+        }
+      }, 1000);
+      return () => clearInterval(countdown);
+    }
+  }, [calculateScore, resetSurveyNo, loadingToggle, router, surveyScore, timer]);
 
   if (loadingToggle) {
     return (
-      <div>
+      <div
+        className={`relative px-4 py-20 max-w-sm mx-auto flex flex-col items-center justify-between h-screen`}
+      >
         <Head>
           <title>Loading...</title>
         </Head>
-        <img></img>
-        <h2>나와 닮은 동물을 찾는 중...</h2>
+        <div className="p-32 relative">
+          <Image
+            src={`/images/loading.gif`}
+            alt="survey_image"
+            layout="fill"
+            quality="50" // 로딩 속도는 quality랑은 상관이 없나...?
+          />
+        </div>
+        <h2 className="font-bold text-xl text-center text-gray-800 ">
+          나와 닮은 동물을 찾는 중...
+        </h2>
       </div>
     );
   }
@@ -93,7 +117,7 @@ const Survey: NextPage = () => {
         />
       </div>
 
-      <div className="font-bold text-lg text-center text-gray-900 z-10">{contents.question}</div>
+      <div className="font-bold text-lg text-center text-gray-800 z-10">{contents.question}</div>
       <div className="w-full flex flex-col gap-4 items-center z-10">
         <Button text={contents.topButtonText} type="surveyNResult" onClick={() => onClick('top')} />
         <Button

@@ -12,7 +12,7 @@ const Button = ({ text, type, onClick }: Props) => {
     <button
       onClick={onClick}
       className={cls(
-        'rounded-3xl shadow-xl w-1/2 font-semibold text-gray-900 border-2 border-gray-300 p-3 flex items-center justify-center',
+        'rounded-3xl shadow-xl w-1/2 font-semibold text-gray-800 border-2 border-gray-300 p-3 flex items-center justify-center',
         type === 'surveyNResult' ? 'bg-white' : 'bg-red-300'
       )}
     >
