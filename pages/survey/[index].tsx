@@ -1,17 +1,27 @@
 import Button from '@components/button/Button';
 import useStore from '@store/store';
 import { setResultOnSurvey } from '@utils/function/setResultOnSurvey';
+import { setSurveyContents } from '@utils/function/setSurveyContents';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
+export interface ContentsForm {
+  question: string;
+  topButtonText: string;
+  bottomButtonText: string;
+}
+
 const Survey: NextPage = () => {
   const router = useRouter();
   const [loadingToggle, setLoadingToggle] = useState(false);
 
   const { surveyNo, surveyScore, addSurveyNo, calculateScore } = useStore();
+  const [contents, setContents] = useState<ContentsForm>(
+    setSurveyContents(Number(router.query.index))
+  );
 
   const onClick = (select: 'top' | 'bottom') => {
     // router.query;
@@ -41,12 +51,13 @@ const Survey: NextPage = () => {
         router.push('/');
         return;
       }
+      setContents(setSurveyContents(Number(router.query.index)));
     }
   }, [router]);
 
-  useEffect(() => {
-    console.log(surveyScore);
-  }, [surveyScore]);
+  // useEffect(() => {
+
+  // }, [surveyScore]);
 
   if (loadingToggle) {
     return (
@@ -61,21 +72,35 @@ const Survey: NextPage = () => {
   }
   return (
     <div
-      className={`px-4 py-20 max-w-sm mx-auto flex flex-col items-center justify-between h-screen bg-[url('/images/survey_bg${router.query.index}.jpeg')]`}
+      className={`relative px-4 py-20 max-w-sm mx-auto flex flex-col items-center gap-1 justify-between h-screen`}
     >
       <Head>
         <title>Survey</title>
       </Head>
       <Image
-        width={200}
-        height={200}
-        src={`/images/survey_logo${surveyNo}.jpeg`}
+        src={`/images/survey_bg${router.query.index}.jpeg`}
         alt="survey_image"
+        layout="fill"
+        quality="50" // 로딩 속도는 quality랑은 상관이 없나...?
       />
-      <div className="font-bold text-lg text-center text-gray-900">나는</div>
-      <div className="w-full flex flex-col gap-4 items-center ">
-        <Button text="활발한 사람이다." type="homeNIntro" onClick={() => onClick('top')} />
-        <Button text="조용한 사람이다." type="homeNIntro" onClick={() => onClick('bottom')} />
+
+      <div className="p-32 relative z-10">
+        <Image
+          src={`/images/survey_logo${surveyNo}.jpeg`}
+          alt="survey_image"
+          className="object-scale-down"
+          layout="fill"
+        />
+      </div>
+
+      <div className="font-bold text-lg text-center text-gray-900 z-10">{contents.question}</div>
+      <div className="w-full flex flex-col gap-4 items-center z-10">
+        <Button text={contents.topButtonText} type="surveyNResult" onClick={() => onClick('top')} />
+        <Button
+          text={contents.bottomButtonText}
+          type="surveyNResult"
+          onClick={() => onClick('bottom')}
+        />
       </div>
     </div>
   );
