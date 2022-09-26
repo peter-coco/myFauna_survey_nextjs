@@ -1,4 +1,4 @@
-export const colors = {
+export const colors = Object.freeze({
   dog: '#FFA985',
   cat: '#959595',
   cow: '#87CBC5',
@@ -8,4 +8,4 @@ export const colors = {
   rabbit: '#DA9185',
   raccon: '#AFBC8F',
   hedgehog: '#8E7C52',
-};
+});
